@@ -40,6 +40,13 @@ export default async function handler(
   const payload: SlackSlashCommandPayload = req.body;
   const query = payload.text;
 
+  if (!query || query.length == 0) {
+    res.status(200).json({
+      response_type: "ephemeral",
+      text: "Please supply an acronym to look up",
+    });
+  }
+
   const result = await searchAcronyms(query);
   const response = result?.join("\n") || `No matches found for ${query}`;
 
