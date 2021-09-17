@@ -92,14 +92,21 @@ export const fetchAcronymsFromNotion = async (): Promise<Acronym[]> => {
     database_id: databaseId!,
   });
 
-  const acronyms = response.results.map((page) => {
-    const description = page.properties.Description as RichTextPropertyValue;
-    const acronym = page.properties.Acronym as TitlePropertyValue;
+  let acronyms: Acronym[] = [];
 
-    return {
-      acronym: acronym.title[0].plain_text,
-      description: description.rich_text[0].plain_text,
-    };
+  response.results.map((page) => {
+    const acronym = page.properties.Acronym as TitlePropertyValue;
+    const acronymText = acronym.title[0]?.plain_text;
+
+    const description = page.properties.Description as RichTextPropertyValue;
+    const descriptionText = description.rich_text[0]?.plain_text;
+
+    if (acronymText && descriptionText) {
+      acronyms.push({
+        acronym: acronymText,
+        description: descriptionText,
+      });
+    }
   });
 
   return acronyms;
